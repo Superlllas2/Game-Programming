@@ -1,0 +1,14 @@
+From www.kenney.nl:
+
+ platformerPack_character.png
+ playerShip1_blue.png
+
+ License: CC0
+
+From HitCtrl, www.opengameart.org:
+
+ The_Endless_Journey.ogg
+
+ License: CC-BY 3.0
+
+Other assets: CC0

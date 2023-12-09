@@ -1,0 +1,5 @@
+C:\Users\stena\Downloads\HelloGXP\GXPEngine\bin\Debug\GXPEngine.exe
+C:\Users\stena\Downloads\HelloGXP\GXPEngine\bin\Debug\GXPEngine.pdb
+C:\Users\stena\Downloads\HelloGXP\GXPEngine\obj\x86\Debug\GXPEngine.csprojResolveAssemblyReference.cache
+C:\Users\stena\Downloads\HelloGXP\GXPEngine\obj\x86\Debug\GXPEngine.exe
+C:\Users\stena\Downloads\HelloGXP\GXPEngine\obj\x86\Debug\GXPEngine.pdb
