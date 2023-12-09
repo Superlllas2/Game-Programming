@@ -33,12 +33,12 @@ namespace GXPEngine
 
         void Update()
         {
-            Movement();
+            Controls();
             idle.Animate(0.03f);
             running.Animate(0.08f);
         }
 
-        void Movement()
+        void Controls()
         {
             playerSpeed = 1.3f;
 
@@ -57,6 +57,8 @@ namespace GXPEngine
             {
                 playerSpeed *= 0.7071f;
             }
+            
+            // MOVEMENT
             if (Input.GetKey(Key.RIGHT))
             {
                 idle.Mirror(false,false);
@@ -76,11 +78,12 @@ namespace GXPEngine
                 y += playerSpeed;
             }
         }
-
+        
+        
         bool CheckDiagonal()
         {
-            return ((Input.GetKey(Key.DOWN) && Input.GetKey(Key.LEFT)) || 
-                    (Input.GetKey(Key.DOWN) && Input.GetKey(Key.RIGHT)) || 
+            return ((Input.GetKey(Key.DOWN) && Input.GetKey(Key.LEFT)) ||
+                    (Input.GetKey(Key.DOWN) && Input.GetKey(Key.RIGHT)) ||
                     (Input.GetKey(Key.UP) && Input.GetKey(Key.LEFT)) ||
                     (Input.GetKey(Key.UP) && Input.GetKey(Key.RIGHT)));
         }
