@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Security.AccessControl;
 using GXPEngine;
 
+
 namespace GXPEngine
 {
     public class Player : Canvas
@@ -11,24 +12,34 @@ namespace GXPEngine
         
         private AnimationSprite idle;
         private AnimationSprite running;
+        private int cash;
 
         public Player() : base(60,80)
         {
            // graphics.Clear(Color.Red);
-            
+            RespawnPlayer();
+           
             SetOrigin(width/2, height);
             idle = new AnimationSprite("Main character/Player/SpriteSheets/idle.png", 8, 1, -1,
                 true, false);
             running = new AnimationSprite("Main character/Player/SpriteSheets/running.png", 10, 1, -1,
                 true, false);
-            AddChild(running);
-            AddChild(idle);
             idle.scale = 0.5f;
             running.scale = 0.5f;
             idle.x = -idle.width / 2;
             idle.y = -100;
             running.x = -running.width / 2;
             running.y = -100;
+
+            // Some UI
+            EasyDraw UI = new EasyDraw(128, 24);
+            UI.Text("Cash: " + cash);
+            UI.SetXY(game.width - UI.width, 0);
+            game.AddChild(UI);
+            
+            // ChildrenGarden
+            AddChild(running);
+            AddChild(idle);
         }
 
         void Update()
@@ -42,6 +53,7 @@ namespace GXPEngine
         {
             playerSpeed = 1.3f;
 
+            // If moving, making running animation active and other way around
             if (Input.GetKey(Key.RIGHT) || Input.GetKey(Key.LEFT) || Input.GetKey(Key.UP) || Input.GetKey(Key.DOWN))
             {
                 idle.visible = false;
@@ -53,6 +65,7 @@ namespace GXPEngine
                 idle.visible = true;
             }
             
+            // If running diagonally, speed slows down
             if (CheckDiagonal())
             {
                 playerSpeed *= 0.7071f;
@@ -78,7 +91,30 @@ namespace GXPEngine
                 y += playerSpeed;
             }
         }
+
+
+        void OnCollision(GameObject other)
+        {
+            if (other is Door)
+            {
+                RespawnPlayer();
+                Console.WriteLine("Door!");
+            }
+
+            if (other is Coin)
+            {
+                Coin coin = other as Coin;
+                coin.PickUp();
+                cash++;
+            }
+        }
         
+        void RespawnPlayer()
+        {
+            // Set Up initial position
+            x = 600;
+            y = 500;
+        }
         
         bool CheckDiagonal()
         {

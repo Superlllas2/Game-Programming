@@ -3,3 +3,8 @@ C:\Users\stena\Downloads\HelloGXP\GXPEngine\bin\Debug\GXPEngine.pdb
 C:\Users\stena\Downloads\HelloGXP\GXPEngine\obj\x86\Debug\GXPEngine.csprojResolveAssemblyReference.cache
 C:\Users\stena\Downloads\HelloGXP\GXPEngine\obj\x86\Debug\GXPEngine.exe
 C:\Users\stena\Downloads\HelloGXP\GXPEngine\obj\x86\Debug\GXPEngine.pdb
+D:\Rider Projects\Game-Programming\obj\x86\Debug\GXPEngine.exe
+D:\Rider Projects\Game-Programming\obj\x86\Debug\GXPEngine.pdb
+D:\Rider Projects\Game-Programming\bin\Debug\GXPEngine.exe
+D:\Rider Projects\Game-Programming\bin\Debug\GXPEngine.pdb
+D:\Rider Projects\Game-Programming\obj\x86\Debug\GXPEngine.csprojResolveAssemblyReference.cache
