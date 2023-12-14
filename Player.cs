@@ -9,10 +9,13 @@ namespace GXPEngine
     public class Player : Canvas
     {
         private float playerSpeed;
+        private float runningAnimationSpeed;
         
         private AnimationSprite idle;
         private AnimationSprite running;
         private int cash;
+        private EasyDraw hitArea;
+        private EasyDraw UI;
 
         public Player() : base(60,80)
         {
@@ -20,6 +23,7 @@ namespace GXPEngine
             RespawnPlayer();
            
             SetOrigin(width/2, height);
+            // TODO: fix animation spriteSheet
             idle = new AnimationSprite("Main character/Player/SpriteSheets/idle.png", 8, 1, -1,
                 true, false);
             running = new AnimationSprite("Main character/Player/SpriteSheets/running.png", 10, 1, -1,
@@ -30,14 +34,17 @@ namespace GXPEngine
             idle.y = -100;
             running.x = -running.width / 2;
             running.y = -100;
+            
+            // TODO: get rid of hard coded values
+            // hitArea = new EasyDraw(100, 100, true);
 
             // Some UI
-            EasyDraw UI = new EasyDraw(128, 24);
-            UI.Text("Cash: " + cash);
+            UI = new EasyDraw(128, 24);
             UI.SetXY(game.width - UI.width, 0);
-            game.AddChild(UI);
             
             // ChildrenGarden
+            game.AddChild(UI);
+            // AddChild(hitArea);
             AddChild(running);
             AddChild(idle);
         }
@@ -45,19 +52,33 @@ namespace GXPEngine
         void Update()
         {
             Controls();
-            idle.Animate(0.03f);
-            running.Animate(0.08f);
+            // TODO: Fix Rect next to the player. Realise why x and y params interfere with width and height
+            // hitArea.Fill(255);
+            // hitArea.Rect(50, 10, 100, 100);
+            ShowUI();
+            idle.Animate(0.1f);
+            running.Animate(runningAnimationSpeed);
         }
 
         void Controls()
         {
-            playerSpeed = 1.3f;
+            playerSpeed = 3;
 
-            // If moving, making running animation active and other way around
+            // WHENEVER MOVING
             if (Input.GetKey(Key.RIGHT) || Input.GetKey(Key.LEFT) || Input.GetKey(Key.UP) || Input.GetKey(Key.DOWN))
             {
+                // If moving, making running animation active and other way around
                 idle.visible = false;
                 running.visible = true;
+                if (Input.GetKey(Key.LEFT_SHIFT))
+                {
+                    runningAnimationSpeed = 0.22f;
+                    playerSpeed = 4f;
+                }
+                else
+                {
+                    runningAnimationSpeed = 0.2f;
+                }
             }
             else
             {
@@ -90,6 +111,12 @@ namespace GXPEngine
             {
                 y += playerSpeed;
             }
+            
+            // FIGHTING
+            if (Input.GetKey(Key.LEFT_ALT))
+            {
+                
+            }
         }
 
 
@@ -98,7 +125,6 @@ namespace GXPEngine
             if (other is Door)
             {
                 RespawnPlayer();
-                Console.WriteLine("Door!");
             }
 
             if (other is Coin)
@@ -114,6 +140,12 @@ namespace GXPEngine
             // Set Up initial position
             x = 600;
             y = 500;
+        }
+
+        void ShowUI()
+        {
+            UI.ClearTransparent();
+            UI.Text("Cash: " + cash);
         }
         
         bool CheckDiagonal()
