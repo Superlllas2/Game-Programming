@@ -56,13 +56,13 @@ namespace GXPEngine
             // hitArea.Fill(255);
             // hitArea.Rect(50, 10, 100, 100);
             ShowUI();
-            idle.Animate(0.1f);
+            idle.Animate(0.02f);
             running.Animate(runningAnimationSpeed);
         }
 
         void Controls()
         {
-            playerSpeed = 3;
+            playerSpeed = 1.2f;
 
             // WHENEVER MOVING
             if (Input.GetKey(Key.RIGHT) || Input.GetKey(Key.LEFT) || Input.GetKey(Key.UP) || Input.GetKey(Key.DOWN))
@@ -72,12 +72,12 @@ namespace GXPEngine
                 running.visible = true;
                 if (Input.GetKey(Key.LEFT_SHIFT))
                 {
-                    runningAnimationSpeed = 0.22f;
-                    playerSpeed = 4f;
+                    runningAnimationSpeed = 0.1f;
+                    playerSpeed = 2f;
                 }
                 else
                 {
-                    runningAnimationSpeed = 0.2f;
+                    runningAnimationSpeed = 0.08f;
                 }
             }
             else

@@ -61,7 +61,7 @@ namespace GXPEngine
 
         void Animate()
         {
-            defaultAnimation.Animate(0.09f);
+            defaultAnimation.Animate(0.04f);
         }
         
         public void PickUp()

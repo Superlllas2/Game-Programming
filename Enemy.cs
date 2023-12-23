@@ -11,7 +11,7 @@ namespace GXPEngine
         private int detectionRadius = 200;
         private Sprite player;
         private Vector2 direction;
-        private float speed = 2.0f;
+        private float speed = 1.2f;
         private float lastSeenX;
         private float lastSeenY;
         private bool playerDetected = false;
@@ -40,7 +40,7 @@ namespace GXPEngine
             }
         }
 
-        private void UpdateDirection(bool playerDetected)
+        private void UpdateDirection()
         {
             if (playerDetected)
             {
