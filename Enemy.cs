@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO.Pipes;
 using GXPEngine.Core;
 
 namespace GXPEngine
@@ -14,11 +15,14 @@ namespace GXPEngine
         private float speed = 1.2f;
         private float lastSeenX;
         private float lastSeenY;
-        private bool playerDetected = false;
+        private float magnitude;
+        private bool playerDetected;
+        private Time elapsedTime;
             
         public Enemy(Sprite player) : base(sizeX, sizeY)
         {
             this.player = player;
+            elapsedTime = new Time();
             RespawnEnemy();
             Fill(255);
             Rect(0, 0, sizeX, sizeY);
@@ -26,10 +30,11 @@ namespace GXPEngine
 
         void Update()
         {
+            // Console.WriteLine(elapsedTime.);
+            UpdateDirection();
+            MoveTowardsPlayer();
             if (DistanceTo(player) < detectionRadius)
             {
-                UpdateDirection();
-                MoveTowardsPlayer();
                 lastSeenX = player.x;
                 lastSeenY = player.y;
                 playerDetected = true;
@@ -44,20 +49,40 @@ namespace GXPEngine
         {
             if (playerDetected)
             {
-                
+                // Calculate the direction vector from enemy to player if IN detection radius
+                direction.x = player.x - x;
+                direction.y = player.y - y;
             }
-            // Calculate the direction vector from enemy to player
-            direction.x = player.x - x;
-            direction.y = player.y - y;
+            else
+            {
+                // Calculate the direction vector from enemy to player if NOT IN detection radius
+                if (lastSeenX != 0 && lastSeenY != 0)
+                {
+                    direction.x = lastSeenX - x;
+                    direction.y = lastSeenY - y; 
+                }
+            }
+            
             // Manually normalize the direction vector
-            float magnitude = (float)Math.Sqrt(direction.x * direction.x + direction.y * direction.y);
-            if (magnitude > 0)
+            magnitude = (float)Math.Sqrt(direction.x * direction.x + direction.y * direction.y);
+            if (magnitude > 1)
             {
                 direction.x /= magnitude;
                 direction.y /= magnitude;
             }
         }
+
+        private void IdleGuard()
+        {
+            
+        }
         
+        // TODO: Finish normalization method extraction
+        // private Vector2 Normalize()
+        // {
+        //     return magnitude;
+        // }
+
         private void MoveTowardsPlayer()
         {
             // Move the enemy towards the player
@@ -65,22 +90,19 @@ namespace GXPEngine
             y += direction.y * speed;
         }
 
-        private void MoveTowardsLastSeen()
-        {
-            // Move the enemy towards the last position of the player seen
-        }
-        
+        // Logic for collision with enemy
         void OnCollision(GameObject other)
         {
             if (other is Player)
             {
+                
             }
         }
 
         void RespawnEnemy()
         {
-            x = Utils.Random(0, game.width - this.width);
-            y = Utils.Random(0, game.height - this.height);
+            x = Utils.Random(0, game.width - width);
+            y = Utils.Random(0, game.height - height);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TiledMapParser;
 
 namespace GXPEngine
 {
@@ -14,6 +15,13 @@ namespace GXPEngine
         
         public GameProgramming() : base(1500, 1000, false)
         {
+            TiledLoader loader = new TiledLoader(null);
+        
+            // Load layers
+            // loader.LoadTileLayers();
+            // loader.LoadObjectGroups();
+            // loader.LoadImageLayers();
+
             // level = new Level();
             player = new Player();
             AddChild(player);

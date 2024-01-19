@@ -62,7 +62,7 @@ namespace GXPEngine
 
         void Controls()
         {
-            playerSpeed = 1.2f;
+            playerSpeed = 3f;
 
             // WHENEVER MOVING
             if (Input.GetKey(Key.RIGHT) || Input.GetKey(Key.LEFT) || Input.GetKey(Key.UP) || Input.GetKey(Key.DOWN))
@@ -73,7 +73,7 @@ namespace GXPEngine
                 if (Input.GetKey(Key.LEFT_SHIFT))
                 {
                     runningAnimationSpeed = 0.1f;
-                    playerSpeed = 2f;
+                    playerSpeed = 4f;
                 }
                 else
                 {
