@@ -8,8 +8,17 @@ namespace GXPEngine
 {
     public class Player : Canvas
     {
+        // TODO: get rid of hard coded values
+        
         private float playerSpeed;
         private float runningAnimationSpeed;
+        
+        // Hitbox variables
+        private EasyDraw hitbox;
+        private bool isHitboxActive;
+        private float hitboxTimer;
+
+        public EasyDraw enemy;
         
         private AnimationSprite idle;
         private AnimationSprite running;
@@ -17,11 +26,15 @@ namespace GXPEngine
         private EasyDraw hitArea;
         private EasyDraw UI;
 
+        public void SetEnemy(EasyDraw enemy)
+        {
+            this.enemy = enemy;
+        }
+        
         public Player() : base(60,80)
         {
            // graphics.Clear(Color.Red);
             RespawnPlayer();
-           
             SetOrigin(width/2, height);
             // TODO: fix animation spriteSheet
             idle = new AnimationSprite("Main character/Player/SpriteSheets/idle.png", 8, 1, -1,
@@ -35,8 +48,12 @@ namespace GXPEngine
             running.x = -running.width / 2;
             running.y = -100;
             
-            // TODO: get rid of hard coded values
-            // hitArea = new EasyDraw(100, 100, true);
+            // Hitbox
+            hitbox = new EasyDraw(50, 100); // Adjust size as needed
+            hitbox.Fill(255, 0, 0); // Red color
+            hitbox.Rect(0, 40, 50, 100); // Draw a square
+            hitbox.visible = false; // Initially invisible
+            game.AddChild(hitbox);
 
             // Some UI
             UI = new EasyDraw(128, 24);
@@ -44,23 +61,25 @@ namespace GXPEngine
             
             // ChildrenGarden
             game.AddChild(UI);
-            // AddChild(hitArea);
             AddChild(running);
             AddChild(idle);
         }
-
+        
         void Update()
         {
-            Controls();
+            Console.WriteLine("Enemy Position: " + enemy.x + ", " + enemy.y);
+            Controls(enemy);
             // TODO: Fix Rect next to the player. Realise why x and y params interfere with width and height
-            // hitArea.Fill(255);
-            // hitArea.Rect(50, 10, 100, 100);
             ShowUI();
             idle.Animate(0.02f);
             running.Animate(runningAnimationSpeed);
+            
+            // Updating hitbox for testing
+            UpdateHitboxPosition();
+            UpdateHitbox();
         }
 
-        void Controls()
+        void Controls(GameObject other)
         {
             playerSpeed = 3f;
 
@@ -84,6 +103,16 @@ namespace GXPEngine
             {
                 running.visible = false;
                 idle.visible = true;
+            }
+            
+            // MOUSE LKM
+            if (Input.GetMouseButtonUp(0)) 
+            {
+                ActivateHitbox();
+                if (other is Enemy)
+                {
+                    Console.WriteLine("Enemy Position: " + enemy.x + ", " + enemy.y);
+                }
             }
             
             // If running diagonally, speed slows down
@@ -118,8 +147,39 @@ namespace GXPEngine
                 
             }
         }
-
-
+        
+        void ActivateHitbox()
+        {
+            isHitboxActive = true;
+            hitbox.visible = true;
+            hitbox.x = x + 20; // Adjust position as needed
+            hitbox.y = y;
+            hitboxTimer = 0;
+        }
+        
+        void UpdateHitbox()
+        {
+            if (isHitboxActive)
+            {
+                hitboxTimer += Time.deltaTime;
+                if (hitboxTimer >= 1000) // 2 seconds
+                {
+                    hitbox.visible = false;
+                    isHitboxActive = false;
+                }
+            }
+        }
+        
+        void UpdateHitboxPosition()
+        {
+            if (isHitboxActive)
+            {
+                // Update hitbox position relative to player
+                hitbox.x = x + 20; // Adjust the offset as needed
+                hitbox.y = y;
+            }
+        }
+        
         void OnCollision(GameObject other)
         {
             if (other is Door)

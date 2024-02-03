@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TiledMapParser;
 
 namespace GXPEngine
@@ -7,7 +8,7 @@ namespace GXPEngine
     {
         private Sprite level;
         private Sprite sprite;
-        private Sprite player;
+        private Player player;
         private Sprite door;
         private Enemy enemy;
         private List<Coin> coins;
@@ -15,9 +16,8 @@ namespace GXPEngine
         
         public GameProgramming() : base(1500, 1000, false)
         {
-            TiledLoader loader = new TiledLoader(null);
+            // TiledLoader loader = new TiledLoader(null);
         
-            // Load layers
             // loader.LoadTileLayers();
             // loader.LoadObjectGroups();
             // loader.LoadImageLayers();
@@ -25,10 +25,10 @@ namespace GXPEngine
             // level = new Level();
             player = new Player();
             AddChild(player);
-            
+
             enemy = new Enemy(player);
             AddChild(enemy);
-
+            
             door = new Door();
             AddChild(door);
             

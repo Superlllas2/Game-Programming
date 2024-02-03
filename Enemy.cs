@@ -10,7 +10,7 @@ namespace GXPEngine
         private static int sizeX = 100;
         private static int sizeY = 100;
         private int detectionRadius = 200;
-        private Sprite player;
+        private Player player;
         private Vector2 direction;
         private float speed = 1.2f;
         private float lastSeenX;
@@ -19,9 +19,10 @@ namespace GXPEngine
         private bool playerDetected;
         private Time elapsedTime;
             
-        public Enemy(Sprite player) : base(sizeX, sizeY)
+        public Enemy(Player player) : base(sizeX, sizeY)
         {
             this.player = player;
+            player.SetEnemy(this);
             elapsedTime = new Time();
             RespawnEnemy();
             Fill(255);
@@ -75,6 +76,15 @@ namespace GXPEngine
         private void IdleGuard()
         {
             
+        }
+        
+        public void RemoveFromGame()
+        {
+            Console.WriteLine("Removing enemy from game");
+            if (this.parent != null)
+            {
+                this.parent.RemoveChild(this);
+            }
         }
         
         // TODO: Finish normalization method extraction
