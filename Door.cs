@@ -4,10 +4,11 @@ namespace GXPEngine
 {
     public class Door : Sprite
     {
-        public Door() : base("colors.png")
+        public Door() : base("door.png")
         {
-            x = 750;
-            y = 500;
+            x = 2390;
+            y = 2100;
+            scale = 0.6f;
         }
 
         void Update()

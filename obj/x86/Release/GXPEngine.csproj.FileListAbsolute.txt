@@ -1,0 +1,4 @@
+/Users/ilia/Documents/University/Game-Programming-working/bin/Release/GXPEngine.exe
+/Users/ilia/Documents/University/Game-Programming-working/obj/x86/Release/GXPEngine.csproj.AssemblyReference.cache
+/Users/ilia/Documents/University/Game-Programming-working/obj/x86/Release/GXPEngine.csproj.CoreCompileInputs.cache
+/Users/ilia/Documents/University/Game-Programming-working/obj/x86/Release/GXPEngine.exe

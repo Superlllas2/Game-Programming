@@ -1,0 +1,92 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "bin/Debug/map1_.tmx",
+    "expandedProjectPaths": [
+        "bin",
+        "bin/Debug",
+        "."
+    ],
+    "fileStates": {
+        "#tileset_1": {
+            "scaleInDock": 0.13
+        },
+        "#tileset_2": {
+            "scaleInDock": 0.0847
+        },
+        "/Users/ilia/Documents/Hello there.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        },
+        "/Users/ilia/Documents/HelloThere.tsx": {
+            "scaleInDock": 1
+        },
+        "bin/Debug/TestMap.tmx": {
+            "scale": 0.27,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 894.4444444444443,
+                "y": 775.9259259259256
+            }
+        },
+        "bin/Debug/map1.tsx": {
+            "scaleInDock": 0.1519,
+            "scaleInEditor": 0.24
+        },
+        "bin/Debug/map1_.tmx": {
+            "scale": 0.1063,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 2615.239887111947,
+                "y": 3066.792097836312
+            }
+        },
+        "bin/Debug/map1_.tmx#tileset_3": {
+            "scaleInDock": 0.15
+        },
+        "bin/Debug/mystic_woods_free_2.1/plains.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1.9488,
+            "scaleInEditor": 2.61
+        },
+        "bin/Debug/tileset_2.tsx": {
+            "scaleInDock": 0.1216,
+            "scaleInEditor": 0.23
+        },
+        "bin/Debug/untitled.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 79.33333333333333,
+                "y": 90
+            }
+        }
+    },
+    "last.imagePath": "/Users/ilia/Documents/University/Game-Programming-working/bin/Debug/Tileset",
+    "map.height": 20,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 256,
+    "map.tileWidth": 256,
+    "map.width": 20,
+    "openFiles": [
+        "bin/Debug/map1_.tmx"
+    ],
+    "project": "untitled.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "bin/Debug/tileset_2.tsx",
+        "bin/Debug/map1_.tmx",
+        "bin/Debug/map1.tsx",
+        "bin/Debug/untitled.tmx",
+        "bin/Debug/mystic_woods_free_2.1/plains.tsx",
+        "bin/Debug/TestMap.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 256,
+        "width": 256
+    }
+}

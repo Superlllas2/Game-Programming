@@ -195,6 +195,7 @@ public class MyGame : Game {
 	// Update is called once per frame, by the engine, for each game object in the hierarchy
 	// (including the Game itself)
 	void Update() {
+		//game.
 		MoveSpaceShip();
 		MoveCharacter();
 		CheckButton();

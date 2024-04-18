@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Drawing;
-using System.Security.AccessControl;
-using GXPEngine;
-
 
 namespace GXPEngine
 {
     public class Player : Canvas
     {
         // TODO: get rid of hard coded values
-        
         private float playerSpeed;
         private float runningAnimationSpeed;
         
@@ -18,28 +13,52 @@ namespace GXPEngine
         private bool isHitboxActive;
         private float hitboxTimer;
 
-        public EasyDraw enemy;
+        public Canvas enemy;
+        public bool collidesWithDoor;
+        public int cash;
         
         private AnimationSprite idle;
         private AnimationSprite running;
-        private int cash;
-        private EasyDraw hitArea;
-        private EasyDraw UI;
+        private UI ui;
 
-        public void SetEnemy(EasyDraw enemy)
+        private float dX;
+        private float dY;
+
+        private Sprite VFX;
+
+        public void SetEnemy(Canvas enemy)
         {
             this.enemy = enemy;
         }
-        
-        public Player() : base(60,80)
+
+        public void SetVFX(bool isActive)
         {
-           // graphics.Clear(Color.Red);
+            if (isActive)
+            {
+                VFX.visible = true;
+            }
+            else
+            {
+                VFX.visible = false;
+            }
+        }
+        
+        public Player() : base(10, 10)
+        {
+            VFX = new Sprite("circle3.png");
+            VFX.visible = false;
+            VFX.scale=1.2f;
+            VFX.blendMode = BlendMode.MULTIPLY; 
+            VFX.SetXY(x - game.width/2 - 180, y - game.height/2 - 150);
+            AddChild(VFX);
+            ui = new UI(cash);
+            AddChild(ui);
+            ui.SetXY(-750, -500);
             RespawnPlayer();
-            SetOrigin(width/2, height);
             // TODO: fix animation spriteSheet
-            idle = new AnimationSprite("Main character/Player/SpriteSheets/idle.png", 8, 1, -1,
+            idle = new AnimationSprite("Main character/Player/SpriteSheets/idle2.png", 8, 1, -1,
                 true, false);
-            running = new AnimationSprite("Main character/Player/SpriteSheets/running.png", 10, 1, -1,
+            running = new AnimationSprite("Main character/Player/SpriteSheets/running2.png", 10, 1, -1,
                 true, false);
             idle.scale = 0.5f;
             running.scale = 0.5f;
@@ -49,50 +68,51 @@ namespace GXPEngine
             running.y = -100;
             
             // Hitbox
-            hitbox = new EasyDraw(50, 100); // Adjust size as needed
-            hitbox.Fill(255, 0, 0); // Red color
-            hitbox.Rect(0, 40, 50, 100); // Draw a square
-            hitbox.visible = false; // Initially invisible
-            game.AddChild(hitbox);
-
-            // Some UI
-            UI = new EasyDraw(128, 24);
-            UI.SetXY(game.width - UI.width, 0);
+            hitbox = new EasyDraw(100, 100);
+            hitbox.Fill(255, 0, 0);
+            hitbox.Rect(0, 40, 50, 100);
+            hitbox.visible = false;
+            AddChild(hitbox);
             
             // ChildrenGarden
-            game.AddChild(UI);
             AddChild(running);
             AddChild(idle);
         }
         
+        public int GetCash()
+        {
+            return cash;
+        }
+
+        public void SetCash(int value)
+        {
+            cash = value;
+        }
+        
         void Update()
         {
-            Console.WriteLine("Enemy Position: " + enemy.x + ", " + enemy.y);
             Controls(enemy);
-            // TODO: Fix Rect next to the player. Realise why x and y params interfere with width and height
-            ShowUI();
             idle.Animate(0.02f);
             running.Animate(runningAnimationSpeed);
             
             // Updating hitbox for testing
-            UpdateHitboxPosition();
             UpdateHitbox();
         }
 
         void Controls(GameObject other)
         {
-            playerSpeed = 3f;
-
+            dX = x;
+            dY = y;
+            playerSpeed = 2f;
             // WHENEVER MOVING
             if (Input.GetKey(Key.RIGHT) || Input.GetKey(Key.LEFT) || Input.GetKey(Key.UP) || Input.GetKey(Key.DOWN))
             {
-                // If moving, making running animation active and other way around
                 idle.visible = false;
                 running.visible = true;
                 if (Input.GetKey(Key.LEFT_SHIFT))
                 {
                     runningAnimationSpeed = 0.1f;
-                    playerSpeed = 4f;
+                    playerSpeed = 3f;
                 }
                 else
                 {
@@ -109,9 +129,9 @@ namespace GXPEngine
             if (Input.GetMouseButtonUp(0)) 
             {
                 ActivateHitbox();
-                if (other is Enemy)
+                if (hitbox.HitTest(enemy))
                 {
-                    Console.WriteLine("Enemy Position: " + enemy.x + ", " + enemy.y);
+                    Console.WriteLine("hit");
                 }
             }
             
@@ -120,7 +140,7 @@ namespace GXPEngine
             {
                 playerSpeed *= 0.7071f;
             }
-            
+                
             // MOVEMENT
             if (Input.GetKey(Key.RIGHT))
             {
@@ -141,10 +161,15 @@ namespace GXPEngine
                 y += playerSpeed;
             }
             
-            // FIGHTING
-            if (Input.GetKey(Key.LEFT_ALT))
+            GameObject[] collisions = GetCollisions();
+            foreach (var obj in collisions)
             {
-                
+                if (obj is AnimationSprite && obj.name == "wall")
+                {
+                    x = dX;
+                    y = dY;
+                    break;
+                }
             }
         }
         
@@ -152,8 +177,6 @@ namespace GXPEngine
         {
             isHitboxActive = true;
             hitbox.visible = true;
-            hitbox.x = x + 20; // Adjust position as needed
-            hitbox.y = y;
             hitboxTimer = 0;
         }
         
@@ -170,21 +193,11 @@ namespace GXPEngine
             }
         }
         
-        void UpdateHitboxPosition()
-        {
-            if (isHitboxActive)
-            {
-                // Update hitbox position relative to player
-                hitbox.x = x + 20; // Adjust the offset as needed
-                hitbox.y = y;
-            }
-        }
-        
         void OnCollision(GameObject other)
         {
             if (other is Door)
             {
-                RespawnPlayer();
+                collidesWithDoor = true;
             }
 
             if (other is Coin)
@@ -198,14 +211,8 @@ namespace GXPEngine
         void RespawnPlayer()
         {
             // Set Up initial position
-            x = 600;
-            y = 500;
-        }
-
-        void ShowUI()
-        {
-            UI.ClearTransparent();
-            UI.Text("Cash: " + cash);
+            x = 200;
+            y = 250;
         }
         
         bool CheckDiagonal()

@@ -6,13 +6,20 @@ namespace GXPEngine
 {
     public class Coin : Canvas
     {
+        private Sound pickUp;
         private AnimationSprite defaultAnimation;
         private Vector2 direction;
-        private Sprite player;
+        private Player player;
         private float speed = 5f;
+        private BoxCollider topWall;
         
-        public Coin(Sprite player) : base(30, 30)
+        public delegate void CoinCollectedHandler(Coin coin);
+        public event CoinCollectedHandler OnCoinCollected;
+
+        
+        public Coin(Player player) : base(30, 30)
         {
+            pickUp = new Sound("coin.mp3", false, false);
             Spawn();
             this.player = player;
             defaultAnimation = new AnimationSprite("CoinAnimation.png", 6, 1, -1,
@@ -54,9 +61,8 @@ namespace GXPEngine
         
         void Spawn()
         {
-            
-            x = Utils.Random(0, game.width - this.width);
-            y = Utils.Random(0, game.height - this.height);
+            x = Utils.Random(160, 2400);
+            y = Utils.Random(160, 2400);
         }
 
         void Animate()
@@ -66,8 +72,9 @@ namespace GXPEngine
         
         public void PickUp()
         {
+            OnCoinCollected?.Invoke(this);
+            pickUp.Play();
             LateDestroy();
-            
         } 
     }
 }

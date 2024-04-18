@@ -2,36 +2,46 @@
 using System.Drawing;
 using System.IO.Pipes;
 using GXPEngine.Core;
+using Rectangle = GXPEngine.Core.Rectangle;
 
 namespace GXPEngine
 {
-    public class Enemy : EasyDraw
+    public class Enemy : Canvas
     {
         private static int sizeX = 100;
         private static int sizeY = 100;
-        private int detectionRadius = 200;
+        private int detectionRadius = 400;
         private Player player;
         private Vector2 direction;
-        private float speed = 1.2f;
+        private float speed = 1.4f;
         private float lastSeenX;
         private float lastSeenY;
         private float magnitude;
         private bool playerDetected;
-        private Time elapsedTime;
-            
-        public Enemy(Player player) : base(sizeX, sizeY)
+        private bool isRunning;
+        
+        private AnimationSprite idle;
+        private AnimationSprite running;
+        
+        public Enemy(Player player) : base(60,80)
         {
+            isRunning = false;
             this.player = player;
+            idle = new AnimationSprite("EnemyIdleAnimation.png", 8, 1, -1,
+                true, false);
+            AddChild(idle);
+            running = new AnimationSprite("EnemyRunAnimation.png", 10, 1, -1,
+                true, false);
+            AddChild(running);
+            running.visible = false;
+            idle.scale = 0.5f;
+            running.scale = 0.5f;
             player.SetEnemy(this);
-            elapsedTime = new Time();
             RespawnEnemy();
-            Fill(255);
-            Rect(0, 0, sizeX, sizeY);
         }
 
         void Update()
         {
-            // Console.WriteLine(elapsedTime.);
             UpdateDirection();
             MoveTowardsPlayer();
             if (DistanceTo(player) < detectionRadius)
@@ -42,7 +52,16 @@ namespace GXPEngine
             }
             else
             {
+                isRunning = false;
+                IdleGuard();
                 playerDetected = false;
+            }
+
+            if (isRunning)
+            {
+                idle.visible = false;
+                running.visible = true;
+                running.Animate(0.08f);
             }
         }
 
@@ -50,6 +69,7 @@ namespace GXPEngine
         {
             if (playerDetected)
             {
+                isRunning = true;
                 // Calculate the direction vector from enemy to player if IN detection radius
                 direction.x = player.x - x;
                 direction.y = player.y - y;
@@ -75,23 +95,19 @@ namespace GXPEngine
 
         private void IdleGuard()
         {
-            
+            running.visible = false;
+            idle.visible = true;
+            idle.Animate(0.08f);
         }
         
         public void RemoveFromGame()
         {
             Console.WriteLine("Removing enemy from game");
-            if (this.parent != null)
+            if (parent != null)
             {
-                this.parent.RemoveChild(this);
+                parent.RemoveChild(this);
             }
         }
-        
-        // TODO: Finish normalization method extraction
-        // private Vector2 Normalize()
-        // {
-        //     return magnitude;
-        // }
 
         private void MoveTowardsPlayer()
         {
@@ -105,14 +121,14 @@ namespace GXPEngine
         {
             if (other is Player)
             {
-                
+                Game.main.Destroy();
             }
         }
 
         void RespawnEnemy()
         {
-            x = Utils.Random(0, game.width - width);
-            y = Utils.Random(0, game.height - height);
+            x = Utils.Random(0, 2560 - width);
+            y = Utils.Random(0, 2560 - height);
         }
     }
 }
