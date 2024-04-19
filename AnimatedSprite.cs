@@ -20,7 +20,6 @@ public class AnimatedSprite : AnimationSprite
             AnimationSprite sprite = child as AnimationSprite;
             if (sprite != null)
             {
-                Console.WriteLine(sprite.name);
                 sprite.visible = false; // Replace with your desired action
             }
         }

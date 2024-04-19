@@ -128,9 +128,18 @@ namespace GXPEngine
                 player.SetCash(0);
                 RemoveAll();
                 
-                Menu menu = new Menu(false, true);
+                Menu menu = new Menu(false, false);
                 game.AddChild(menu);
             }
+
+            // if (player.GetHealth() == 0)
+            // {
+            //     player.SetCash(0);
+            //     RemoveAll();
+            //     
+            //     Menu menu = new Menu(false, true);
+            //     game.AddChild(menu);
+            // }
             
             if (player.collidesWithDoor)
             {

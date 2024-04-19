@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using GXPEngine.Core;
 
 namespace GXPEngine
 {
@@ -13,7 +15,8 @@ namespace GXPEngine
         private bool isHitboxActive;
         private float hitboxTimer;
 
-        public Enemy enemy;
+        private Enemy enemy;
+        
         public bool collidesWithDoor;
         public int cash;
         
@@ -28,6 +31,13 @@ namespace GXPEngine
         private Sprite VFX;
         private Sound swordSwing;
 
+        private Sound damageSound;
+        private Vector2 knockbackVelocity;
+        private float initialKnockbackSpeed = 20f;
+        private float knockbackStrength = 100f;
+        private bool isKnockedBack;
+        private int health;
+        
         public void SetEnemy(Enemy enemy)
         {
             this.enemy = enemy;
@@ -54,6 +64,11 @@ namespace GXPEngine
         {
             cash = value;
         }
+
+        public int GetHealth()
+        {
+            return health;
+        }
         
         public Player() : base(10, 10)
         {
@@ -64,7 +79,10 @@ namespace GXPEngine
             VFX.SetXY(x - game.width/2 - 180, y - game.height/2 - 150);
             AddChild(VFX);
 
+            damageSound = new Sound("SFX/damage.mp3");
             swordSwing = new Sound("SFX/swordSwing.mp3");
+
+            health = 3;
             
             ui = new UI(cash);
             AddChild(ui);
@@ -105,9 +123,28 @@ namespace GXPEngine
         
         void Update()
         {
-            Controls(enemy);
             idle.Animate(0.02f);
             running.Animate(runningAnimationSpeed);
+            
+            if (isKnockedBack)
+            {
+                x += knockbackVelocity.x;
+                y += knockbackVelocity.y;
+                
+                float inertia = 0.9f;
+                knockbackVelocity.x *= inertia;
+                knockbackVelocity.y *= inertia;
+                
+                if (Math.Abs(knockbackVelocity.x) < 0.1f && Math.Abs(knockbackVelocity.y) < 0.1f)
+                {
+                    isKnockedBack = false;
+                    knockbackVelocity = new Vector2(0, 0);
+                }
+            }
+            else
+            {
+                Controls(enemy);
+            }
             
             // Updating hitbox for testing
             UpdateHitbox();
@@ -197,6 +234,29 @@ namespace GXPEngine
             }
         }
 
+        
+        public void ReceiveDamage() {
+            health--;
+            damageSound.Play(volume: 0.8f);
+    
+            if (health > 0) {
+                Vector2 knockbackDirection = new Vector2(x - enemy.x, y - enemy.y);
+                
+                float knockbackMagnitude = (float)Math.Sqrt(knockbackDirection.x * knockbackDirection.x + knockbackDirection.y * knockbackDirection.y);
+                if (knockbackMagnitude > 0) {
+                    knockbackDirection.x /= knockbackMagnitude;
+                    knockbackDirection.y /= knockbackMagnitude;
+                }
+        
+                knockbackVelocity = new Vector2(knockbackDirection.x * initialKnockbackSpeed, knockbackDirection.y * initialKnockbackSpeed);
+                isKnockedBack = true;
+                
+                // speed = 0;
+            } else {
+                Die();
+            }
+        }
+        
         void Hit()
         {
             // MOUSE LKM
@@ -206,8 +266,10 @@ namespace GXPEngine
             attackAnimation.visible = true;
             attackAnimation.PlayOnce();
             ActivateHitbox();
+            
             if (hitbox.HitTest(enemy))
             {
+                Console.WriteLine(enemy.name);
                 if (attackAnimation.ReadyForAction())
                 {
                     enemy.ReceiveDamage();
@@ -218,7 +280,7 @@ namespace GXPEngine
         void ActivateHitbox()
         {
             isHitboxActive = true;
-            hitbox.visible = true;
+            hitbox.visible = false;
             hitboxTimer = 0;
         }
         
@@ -248,6 +310,18 @@ namespace GXPEngine
                 coin.PickUp();
                 cash++;
             }
+        }
+
+        void Die()
+        {
+            List<GameObject> children = parent.GetChildren();
+            foreach (GameObject child in children)
+            {
+                child.LateDestroy();
+            }
+            
+            Menu menu = new Menu(false, false);
+            game.LateAddChild(menu);
         }
         
         void RespawnPlayer()

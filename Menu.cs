@@ -80,7 +80,6 @@ namespace GXPEngine
 
                 hasStarted = true;
                 Level level = new Level("map1_.tmx");
-                // game.AddChild(new Level("untitled.tmx"));
                 game.AddChild(level);
             }
         }

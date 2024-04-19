@@ -26,11 +26,13 @@ namespace GXPEngine
         private int minDistance = 300;
 
         private Sound damageSound;
-        private float knockbackStrength = 100f;
-        private int health = 30;
+        private float knockbackStrength = 10f;
+        private int health = 3;
         private Vector2 knockbackVelocity;
-        float initialKnockbackSpeed = 5f;
+        float initialKnockbackSpeed = 2f;
         private bool isKnockedBack;
+        private float attackCooldown = 1500.0f;
+        private float attackTimer;
         
         public Enemy(Player player) : base(60,80)
         {
@@ -74,6 +76,11 @@ namespace GXPEngine
         
         void Update()
         {
+            if (attackTimer > 0)
+            {
+                attackTimer -= Time.deltaTime;
+            }
+            
             if (isKnockedBack)
             {
                 x += knockbackVelocity.x;
@@ -179,9 +186,10 @@ namespace GXPEngine
         // Logic for collision with enemy
         void OnCollision(GameObject other)
         {
-            if (other is Player)
+            if (other is Player  && attackTimer <= 0)
             {
-                Game.main.Destroy();
+                player.ReceiveDamage();
+                attackTimer = attackCooldown;
             }
         }
 
