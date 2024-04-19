@@ -13,20 +13,22 @@ namespace GXPEngine
         private bool isHitboxActive;
         private float hitboxTimer;
 
-        public Canvas enemy;
+        public Enemy enemy;
         public bool collidesWithDoor;
         public int cash;
         
         private AnimationSprite idle;
         private AnimationSprite running;
+        private AnimatedSprite attackAnimation;
         private UI ui;
 
         private float dX;
         private float dY;
 
         private Sprite VFX;
+        private Sound swordSwing;
 
-        public void SetEnemy(Canvas enemy)
+        public void SetEnemy(Enemy enemy)
         {
             this.enemy = enemy;
         }
@@ -43,42 +45,6 @@ namespace GXPEngine
             }
         }
         
-        public Player() : base(10, 10)
-        {
-            VFX = new Sprite("circle3.png");
-            VFX.visible = false;
-            VFX.scale=1.2f;
-            VFX.blendMode = BlendMode.MULTIPLY; 
-            VFX.SetXY(x - game.width/2 - 180, y - game.height/2 - 150);
-            AddChild(VFX);
-            ui = new UI(cash);
-            AddChild(ui);
-            ui.SetXY(-750, -500);
-            RespawnPlayer();
-            // TODO: fix animation spriteSheet
-            idle = new AnimationSprite("Main character/Player/SpriteSheets/idle2.png", 8, 1, -1,
-                true, false);
-            running = new AnimationSprite("Main character/Player/SpriteSheets/running2.png", 10, 1, -1,
-                true, false);
-            idle.scale = 0.5f;
-            running.scale = 0.5f;
-            idle.x = -idle.width / 2;
-            idle.y = -100;
-            running.x = -running.width / 2;
-            running.y = -100;
-            
-            // Hitbox
-            hitbox = new EasyDraw(100, 100);
-            hitbox.Fill(255, 0, 0);
-            hitbox.Rect(0, 40, 50, 100);
-            hitbox.visible = false;
-            AddChild(hitbox);
-            
-            // ChildrenGarden
-            AddChild(running);
-            AddChild(idle);
-        }
-        
         public int GetCash()
         {
             return cash;
@@ -87,6 +53,54 @@ namespace GXPEngine
         public void SetCash(int value)
         {
             cash = value;
+        }
+        
+        public Player() : base(10, 10)
+        {
+            VFX = new Sprite("circle3.png");
+            VFX.visible = false;
+            VFX.scale = 1.2f;
+            VFX.blendMode = BlendMode.MULTIPLY; 
+            VFX.SetXY(x - game.width/2 - 180, y - game.height/2 - 150);
+            AddChild(VFX);
+
+            swordSwing = new Sound("SFX/swordSwing.mp3");
+            
+            ui = new UI(cash);
+            AddChild(ui);
+            
+            ui.SetXY(-750, -500);
+            RespawnPlayer();
+            
+            // TODO: fix animation spriteSheet
+            idle = new AnimationSprite("Main character/Player/SpriteSheets/idle2.png", 8, 1, -1,
+                true, false);
+            running = new AnimationSprite("Main character/Player/SpriteSheets/running2.png", 10, 1, -1,
+                true, false);
+            idle.scale = 0.5f;
+            running.scale = 0.5f;
+            idle.x = -idle.width / 2;
+            idle.y = -idle.height / 2;
+            running.x = -running.width / 2;
+            running.y = -running.height / 2;
+            attackAnimation = new AnimatedSprite("Main character/Player/SpriteSheets/playerAttack.png", 8, 1);
+            attackAnimation.scale = 0.5f;
+            attackAnimation.visible = false;
+            attackAnimation.SetFrameDelay(15);
+            attackAnimation.SetXY(-attackAnimation.width / 2, -attackAnimation.height / 2);
+            AddChild(attackAnimation);
+            
+            // Hitbox
+            hitbox = new EasyDraw(100, 275);
+            hitbox.Fill(255, 0, 0);
+            hitbox.Rect(0, 0, 200, 275);
+            hitbox.SetXY(30, -75);
+            hitbox.visible = false;
+            AddChild(hitbox);
+            
+            // ChildrenGarden
+            AddChild(running);
+            AddChild(idle);
         }
         
         void Update()
@@ -107,8 +121,6 @@ namespace GXPEngine
             // WHENEVER MOVING
             if (Input.GetKey(Key.RIGHT) || Input.GetKey(Key.LEFT) || Input.GetKey(Key.UP) || Input.GetKey(Key.DOWN))
             {
-                idle.visible = false;
-                running.visible = true;
                 if (Input.GetKey(Key.LEFT_SHIFT))
                 {
                     runningAnimationSpeed = 0.1f;
@@ -118,20 +130,27 @@ namespace GXPEngine
                 {
                     runningAnimationSpeed = 0.08f;
                 }
+
+                if (Input.GetMouseButtonUp(0))
+                {
+                    Hit();
+                }
+
+                if (attackAnimation.visible == false)
+                {
+                    idle.visible = false;
+                    running.visible = true;
+                }
+            } else if (Input.GetMouseButtonUp(0))
+            {
+                Hit();
             }
             else
             {
-                running.visible = false;
-                idle.visible = true;
-            }
-            
-            // MOUSE LKM
-            if (Input.GetMouseButtonUp(0)) 
-            {
-                ActivateHitbox();
-                if (hitbox.HitTest(enemy))
+                if (attackAnimation.visible == false)
                 {
-                    Console.WriteLine("hit");
+                    running.visible = false;
+                    idle.visible = true;
                 }
             }
             
@@ -144,13 +163,18 @@ namespace GXPEngine
             // MOVEMENT
             if (Input.GetKey(Key.RIGHT))
             {
+                hitbox.SetXY(30, -65);
+                hitbox.Mirror(false, false);
                 idle.Mirror(false,false);
                 running.Mirror(false, false);
+                attackAnimation.Mirror(false, false);
                 x += playerSpeed;
             } else if (Input.GetKey(Key.LEFT))
             { 
+                hitbox.SetXY(-110, -65);
                 idle.Mirror(true,false);
                 running.Mirror(true, false);
+                attackAnimation.Mirror(true, false);
                 x -= playerSpeed;
             }
             if (Input.GetKey(Key.UP))
@@ -172,6 +196,24 @@ namespace GXPEngine
                 }
             }
         }
+
+        void Hit()
+        {
+            // MOUSE LKM
+            swordSwing.Play();
+            idle.visible = false;
+            running.visible = false;
+            attackAnimation.visible = true;
+            attackAnimation.PlayOnce();
+            ActivateHitbox();
+            if (hitbox.HitTest(enemy))
+            {
+                if (attackAnimation.ReadyForAction())
+                {
+                    enemy.ReceiveDamage();
+                }
+            }
+        }
         
         void ActivateHitbox()
         {
@@ -182,15 +224,15 @@ namespace GXPEngine
         
         void UpdateHitbox()
         {
-            if (isHitboxActive)
-            {
-                hitboxTimer += Time.deltaTime;
-                if (hitboxTimer >= 1000) // 2 seconds
-                {
-                    hitbox.visible = false;
-                    isHitboxActive = false;
-                }
-            }
+            // if (isHitboxActive)
+            // {
+            //     hitboxTimer += Time.deltaTime;
+            //     if (hitboxTimer >= 1000) // 2 seconds
+            //     {
+            //         hitbox.visible = false;
+            //         isHitboxActive = false;
+            //     }
+            // }
         }
         
         void OnCollision(GameObject other)

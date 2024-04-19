@@ -56,6 +56,7 @@ namespace GXPEngine
             {
                 if (button.HitTestPoint(Input.mouseX, Input.mouseY))
                 {
+                    button.PlaySound();
                     HideMenu();
                     StartGame();
                 }

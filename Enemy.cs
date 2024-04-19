@@ -10,10 +10,10 @@ namespace GXPEngine
     {
         private static int sizeX = 100;
         private static int sizeY = 100;
-        private int detectionRadius = 400;
+        private int detectionRadius = 300;
         private Player player;
         private Vector2 direction;
-        private float speed = 1.4f;
+        private float speed = 0.8f;
         private float lastSeenX;
         private float lastSeenY;
         private float magnitude;
@@ -23,8 +23,18 @@ namespace GXPEngine
         private AnimationSprite idle;
         private AnimationSprite running;
         
+        private int minDistance = 300;
+
+        private Sound damageSound;
+        private float knockbackStrength = 100f;
+        private int health = 30;
+        private Vector2 knockbackVelocity;
+        float initialKnockbackSpeed = 5f;
+        private bool isKnockedBack;
+        
         public Enemy(Player player) : base(60,80)
         {
+            damageSound = new Sound("SFX/damage.mp3");
             isRunning = false;
             this.player = player;
             idle = new AnimationSprite("EnemyIdleAnimation.png", 8, 1, -1,
@@ -40,43 +50,93 @@ namespace GXPEngine
             RespawnEnemy();
         }
 
+        public void ReceiveDamage()
+        {
+            health--;
+            damageSound.Play(volume: 0.8f);
+            
+            if (health > 0)
+            {
+                Vector2 knockbackDirection = new Vector2(x - (player.x), y - (player.y));
+                
+                float knockbackMagnitude = (float)Math.Sqrt(knockbackDirection.x * knockbackDirection.x + knockbackDirection.y * knockbackDirection.y);
+                if (knockbackMagnitude > 0)
+                {
+                    knockbackDirection.x /= knockbackMagnitude;
+                    knockbackDirection.y /= knockbackMagnitude;
+                }
+                
+                knockbackVelocity = new Vector2(knockbackDirection.x * initialKnockbackSpeed, knockbackDirection.y * initialKnockbackSpeed);
+
+                isKnockedBack = true;
+            }
+        }
+        
         void Update()
         {
-            UpdateDirection();
-            MoveTowardsPlayer();
-            if (DistanceTo(player) < detectionRadius)
+            if (isKnockedBack)
             {
-                lastSeenX = player.x;
-                lastSeenY = player.y;
-                playerDetected = true;
+                x += knockbackVelocity.x;
+                y += knockbackVelocity.y;
+                
+                float inertia = 0.9f;
+                knockbackVelocity.x *= inertia;
+                knockbackVelocity.y *= inertia;
+                
+                if (Math.Abs(knockbackVelocity.x) < 0.1f && Math.Abs(knockbackVelocity.y) < 0.1f)
+                {
+                    isKnockedBack = false;
+                    knockbackVelocity = new Vector2(0, 0);
+                }
             }
             else
             {
-                isRunning = false;
-                IdleGuard();
-                playerDetected = false;
-            }
+                UpdateDirection();
+                MoveTowardsPlayer();
+                if (DistanceTo(player) < detectionRadius)
+                {
+                    lastSeenX = player.x;
+                    lastSeenY = player.y;
+                    playerDetected = true;
+                }
+                else
+                {
+                    isRunning = false;
+                    IdleGuard();
+                    playerDetected = false;
+                }
 
-            if (isRunning)
+                if (isRunning)
+                {
+                    idle.visible = false;
+                    running.visible = true;
+                    running.Animate(0.08f);
+                }
+            }
+            
+            if (health == 0)
             {
-                idle.visible = false;
-                running.visible = true;
-                running.Animate(0.08f);
+                Die();
             }
         }
 
+        private void Die()
+        {
+            LateRemove();
+        }
+        
         private void UpdateDirection()
         {
             if (playerDetected)
             {
                 isRunning = true;
-                // Calculate the direction vector from enemy to player if IN detection radius
+                // Calculating the direction vector from enemy to player if IN detection radius
                 direction.x = player.x - x;
-                direction.y = player.y - y;
+                direction.y = player.y - y - 60;
             }
             else
             {
-                // Calculate the direction vector from enemy to player if NOT IN detection radius
+                // Calculating the direction vector from enemy to player if NOT IN detection radius
                 if (lastSeenX != 0 && lastSeenY != 0)
                 {
                     direction.x = lastSeenX - x;
@@ -127,8 +187,12 @@ namespace GXPEngine
 
         void RespawnEnemy()
         {
-            x = Utils.Random(0, 2560 - width);
-            y = Utils.Random(0, 2560 - height);
+            // If a random spawn point is too close to the player, then spawn in another place
+            do
+            {
+                x = Utils.Random(160, 2400);
+                y = Utils.Random(160, 2400);
+            } while ((Math.Sqrt((x - player.x) * (x - player.x) + (y - player.y) * (y - player.y)) < minDistance));
         }
     }
 }

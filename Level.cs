@@ -77,7 +77,7 @@ namespace GXPEngine
                 coinsToSpawn = cashRoom1 - cashCollected1;
                 if (wasGameStarted)
                 {
-                    player.SetXY(2353, 2191);
+                    player.SetXY(2353, 2161);
                 }
             }
             else if (currentRoom == "map2_.tmx")
@@ -85,7 +85,7 @@ namespace GXPEngine
                 player.SetVFX(true);
                 wasGameStarted = true;
                 door.SetXY(75, 2161);
-                player.SetXY(183, 2250);
+                player.SetXY(183, 2220);
                 coinsToSpawn = cashRoom2 - cashCollected2;
             }
 
@@ -123,7 +123,7 @@ namespace GXPEngine
                 y = game.height / (2 * game.scaleY) - player.y;
             }
 
-            if (player?.GetCash() == cashGoal)
+            if (player.GetCash() == cashGoal)
             {
                 player.SetCash(0);
                 RemoveAll();

@@ -3,11 +3,6 @@ C:/Users/stena/Downloads/HelloGXP/GXPEngine/bin/Debug/GXPEngine.pdb
 C:/Users/stena/Downloads/HelloGXP/GXPEngine/obj/x86/Debug/GXPEngine.csprojResolveAssemblyReference.cache
 C:/Users/stena/Downloads/HelloGXP/GXPEngine/obj/x86/Debug/GXPEngine.exe
 C:/Users/stena/Downloads/HelloGXP/GXPEngine/obj/x86/Debug/GXPEngine.pdb
-D:/Rider Projects/Game-Programming/obj/x86/Debug/GXPEngine.exe
-D:/Rider Projects/Game-Programming/obj/x86/Debug/GXPEngine.pdb
-D:/Rider Projects/Game-Programming/bin/Debug/GXPEngine.exe
-D:/Rider Projects/Game-Programming/bin/Debug/GXPEngine.pdb
-D:/Rider Projects/Game-Programming/obj/x86/Debug/GXPEngine.csprojResolveAssemblyReference.cache
 /Users/ilia/Game-Programming/bin/Debug/GXPEngine.exe
 /Users/ilia/Game-Programming/bin/Debug/GXPEngine.pdb
 /Users/ilia/Game-Programming/obj/x86/Debug/GXPEngine.csproj.AssemblyReference.cache
@@ -20,3 +15,8 @@ D:/Rider Projects/Game-Programming/obj/x86/Debug/GXPEngine.csprojResolveAssembly
 /Users/ilia/Documents/University/Game-Programming-working/obj/x86/Debug/GXPEngine.csproj.CoreCompileInputs.cache
 /Users/ilia/Documents/University/Game-Programming-working/obj/x86/Debug/GXPEngine.exe
 /Users/ilia/Documents/University/Game-Programming-working/obj/x86/Debug/GXPEngine.pdb
+D:\Rider Projects\Game-Programming\obj\x86\Debug\GXPEngine.csprojResolveAssemblyReference.cache
+D:\Rider Projects\Game-Programming\obj\x86\Debug\GXPEngine.exe
+D:\Rider Projects\Game-Programming\bin\Debug\GXPEngine.exe
+D:\Rider Projects\Game-Programming\bin\Debug\GXPEngine.pdb
+D:\Rider Projects\Game-Programming\obj\x86\Debug\GXPEngine.pdb

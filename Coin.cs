@@ -13,13 +13,14 @@ namespace GXPEngine
         private float speed = 5f;
         private BoxCollider topWall;
         
+        
         public delegate void CoinCollectedHandler(Coin coin);
         public event CoinCollectedHandler OnCoinCollected;
 
         
         public Coin(Player player) : base(30, 30)
         {
-            pickUp = new Sound("coin.mp3", false, false);
+            pickUp = new Sound("SFX/coin.mp3", false, false);
             Spawn();
             this.player = player;
             defaultAnimation = new AnimationSprite("CoinAnimation.png", 6, 1, -1,
@@ -72,8 +73,8 @@ namespace GXPEngine
         
         public void PickUp()
         {
-            OnCoinCollected?.Invoke(this);
-            pickUp.Play();
+            OnCoinCollected.Invoke(this);
+            pickUp.Play(volume: 0.2f);
             LateDestroy();
         } 
     }
